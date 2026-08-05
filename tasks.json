@@ -1,1 +1,16 @@
-task-cliadd
+[
+    {
+        "id": 1,
+        "description": "Ini deskripsi",
+        "status": "todo",
+        "createdAt": "2026-08-05 02:15:16",
+        "updatedAt": "2026-08-05 02:15:16"
+    },
+    {
+        "id": 2,
+        "description": "Ini deskripsi",
+        "status": "todo",
+        "createdAt": "2026-08-05 02:15:19",
+        "updatedAt": "2026-08-05 02:15:19"
+    }
+]

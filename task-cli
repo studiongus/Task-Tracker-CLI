@@ -5,9 +5,23 @@ if (!file_exists('tasks.json')) {
     file_put_contents('tasks.json', []);
 }
 
+$tasks = json_decode(file_get_contents('tasks.json'), true);
+
 switch ($argv[1] ?? null) {
-    case 'add':
-        echo "add";
+    case 'add':        
+        $input = [
+            'id' => empty($tasks) ? 1 : max(array_column($tasks, 'id')) + 1,
+            'description' => $argv[2],
+            'status' => 'todo',
+            'createdAt' => date("Y-m-d H:i:s"),
+            'updatedAt' => date("Y-m-d H:i:s"),
+        ];
+
+        $tasks[] = $input;
+
+        file_put_contents('tasks.json', json_encode($tasks, JSON_PRETTY_PRINT));
+
+        echo "Task added successfully (ID: {$input['id']}) \n";
 
         break;
 
