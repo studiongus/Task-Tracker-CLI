@@ -64,13 +64,26 @@ switch ($argv[1] ?? null) {
         break;
 
     case 'delete':
-        // $id = $argv[2];
+        $id = $argv[2];
+        $found = false;
 
-        // foreach ($tasks as $task) {
-        //     if ($task['id'] == $id) {
+        foreach ($tasks as $index => $task) {
+            if ($task['id'] == $id) {
+                $found = true;
+                unset($tasks[$index]);
 
-        //     }
-        // }
+                file_put_contents('data/tasks.json', json_encode(array_values($tasks), JSON_PRETTY_PRINT));
+                
+                echo "Task deleted \n";
+
+                break;
+            }
+        }
+
+
+        if ($found === false) {
+            echo "Task not found \n";
+        }
 
         break;
 
