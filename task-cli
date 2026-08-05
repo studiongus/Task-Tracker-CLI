@@ -26,12 +26,46 @@ switch ($argv[1] ?? null) {
         break;
 
     case 'update':
-        echo "update";
+        $id = $argv[2];
+        $description = $argv[3];
+        $updatedAt = date("Y-m-d H:i:s");
+        $found = false;
+
+        foreach ($tasks as &$task) {
+            if ($task['id'] == $id) {
+                $found = true;
+
+                if ($task['description'] === $description) {
+                    echo "bruh, it is the same description, just don't update it. \n";
+
+                    break;
+                }
+
+                $task['description'] = $description;
+                $task['updatedAt'] = $updatedAt;
+
+                file_put_contents('tasks.json', json_encode($tasks, JSON_PRETTY_PRINT));
+                
+                echo "Task updated successfully (ID: {$id}) \n";
+
+                break;
+            }
+        }
+
+        if ($found === false) {
+            echo "Task not found.\n";
+        }
 
         break;
 
     case 'delete':
-        echo "delete";
+        // $id = $argv[2];
+
+        // foreach ($tasks as $task) {
+        //     if ($task['id'] == $id) {
+
+        //     }
+        // }
 
         break;
 
