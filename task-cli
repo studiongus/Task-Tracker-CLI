@@ -1,0 +1,63 @@
+<?php
+
+// check if tasks.json exist
+if (!file_exists('tasks.json')) {
+    file_put_contents('tasks.json', []);
+}
+
+switch ($argv[1] ?? null) {
+    case 'add':
+        echo "add";
+
+        break;
+
+    case 'update':
+        echo "update";
+
+        break;
+
+    case 'delete':
+        echo "delete";
+
+        break;
+
+    case 'mark-in-progress':
+        echo "mark-in-progress";
+
+        break;
+
+    case 'mark-done':
+        echo "mark-done";
+
+        break;
+
+    case 'list':
+        switch (true) {
+            case !isset($argv[2]):
+                echo "list";
+
+                break;
+
+            case ($argv[2] === 'done'):
+                echo "list done";
+
+                break;
+
+            case ($argv[2] === 'todo'):
+                echo "list todo";
+
+                break;
+
+            case ($argv[2] === 'in-progress'):
+                echo "list in-progress";
+
+                break;
+        }
+        
+        break;
+
+    default:
+        echo "Please enter a valid command \n";
+
+        break;
+}
