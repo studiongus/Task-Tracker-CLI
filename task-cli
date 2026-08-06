@@ -10,17 +10,35 @@ if (!file_exists('data/tasks.json')) {
     file_put_contents('data/tasks.json', json_encode([]));
 }
 
+$commands = [
+    'add',
+    'update',
+    'delete',
+    'mark-in-progress',
+    'mark-done',
+    'list',
+    'list done',
+    'list todo',
+    'list in-progress',
+];
+
 $tasks = json_decode(file_get_contents('data/tasks.json'), true);
 
 switch ($argv[1] ?? null) {
     case 'add':        
         $input = [
             'id' => empty($tasks) ? 1 : max(array_column($tasks, 'id')) + 1,
-            'description' => $argv[2],
+            'description' => $argv[2] ?? null,
             'status' => 'todo',
             'createdAt' => date("Y-m-d H:i:s"),
             'updatedAt' => date("Y-m-d H:i:s"),
         ];
+
+        if (empty($input['description'])) {
+            echo "The description cant be empty \n";
+
+            break;
+        }
 
         $tasks[] = $input;
 
@@ -31,8 +49,8 @@ switch ($argv[1] ?? null) {
         break;
 
     case 'update':
-        $id = $argv[2];
-        $description = $argv[3];
+        $id = $argv[2] ?? null;
+        $description = $argv[3] ?? null;
         $updatedAt = date("Y-m-d H:i:s");
         $found = false;
 
@@ -42,6 +60,10 @@ switch ($argv[1] ?? null) {
 
                 if ($task['description'] === $description) {
                     echo "bruh, it is the same description, just don't update it. \n";
+
+                    break;
+                } elseif ($description === null) {
+                    echo "the description just can not be empty \n";
 
                     break;
                 }
@@ -58,13 +80,17 @@ switch ($argv[1] ?? null) {
         }
 
         if ($found === false) {
-            echo "Task not found.\n";
+            if ($id === null) {
+                echo "Please input the ID mate. \n";
+            } else {
+                echo "Task not found.\n";
+            }
         }
 
         break;
 
     case 'delete':
-        $id = $argv[2];
+        $id = $argv[2] ?? null;
         $found = false;
 
         foreach ($tasks as $index => $task) {
@@ -80,42 +106,161 @@ switch ($argv[1] ?? null) {
             }
         }
 
-
         if ($found === false) {
-            echo "Task not found \n";
+            if ($id === null) {
+                echo "Please input the ID mate. \n";
+            } else {
+                echo "Task not found \n";
+            }
         }
 
         break;
 
     case 'mark-in-progress':
-        echo "mark-in-progress";
+        $id = $argv[2] ?? null;
+        $status = 'in-progress';
+        $updatedAt = date("Y-m-d H:i:s");
+
+        $found = false;
+
+        foreach ($tasks as &$task) {
+            if ($task['id'] == $id) {
+                $found = true;
+                
+                if ($status == $task['status']) {
+                    echo "bruh, it is the same status, just don't update it. \n";
+
+                    break;
+                }
+
+                $task['status'] = $status;
+                $task['updatedAt'] = $updatedAt;
+
+                file_put_contents('data/tasks.json', json_encode($tasks, JSON_PRETTY_PRINT));
+                
+                echo "Status marked to {$status} (ID: {$id}) \n";
+
+                break;
+            }
+        }
+        
+        if ($found === false) {
+            if ($id === null) {
+                echo "Please input the ID mate. \n";
+            } else {
+                echo "Task not found \n";
+            }
+        }
 
         break;
 
     case 'mark-done':
-        echo "mark-done";
+        $id = $argv[2] ?? null;
+        $status = 'done';
+        $updatedAt = date("Y-m-d H:i:s");
+
+        $found = false;
+
+        foreach ($tasks as &$task) {
+            if ($task['id'] == $id) {
+                $found = true;
+                
+                if ($status == $task['status']) {
+                    echo "bruh, it is the same status, just don't update it. \n";
+
+                    break;
+                }
+
+                $task['status'] = $status;
+                $task['updatedAt'] = $updatedAt;
+
+                file_put_contents('data/tasks.json', json_encode($tasks, JSON_PRETTY_PRINT));
+                
+                echo "Status marked to {$status} (ID: {$id}) \n";
+
+                break;
+            }
+        }
+        
+        if ($found === false) {
+            if ($id === null) {
+                echo "Please input the ID mate. \n";
+            } else {
+                echo "Task not found \n";
+            }
+        }
 
         break;
 
     case 'list':
         switch (true) {
             case !isset($argv[2]):
-                echo "list";
+                $found = false;
+
+                foreach ($tasks ?? [] as $task) {
+                    $found = true;
+
+                    echo $task['description'] . "\n";
+                }
+
+                if ($found === false) {
+                    echo "There is no task to be listed \n";
+                }
 
                 break;
 
             case ($argv[2] === 'done'):
-                echo "list done";
+                $found = false;
+                
+                foreach ($tasks ?? [] as $task) {
+                    if ($task['status'] === 'done') {
+                        $found = true;
+
+                        echo $task['description'] . "\n";
+                    }
+                }
+
+                if ($found === false) {
+                    echo "There is no task with status 'done' \n";
+                    
+                    break;
+                }
 
                 break;
 
             case ($argv[2] === 'todo'):
-                echo "list todo";
+                $found = false;
+                
+                foreach ($tasks ?? [] as $task) {
+                    if ($task['status'] === 'todo') {
+                        $found = true;
+                        echo $task['description'] . "\n";
+                    }
+                }
+
+                if ($found === false) {
+                    echo "There is no task with status 'todo' \n";
+                    
+                    break;
+                }
 
                 break;
 
             case ($argv[2] === 'in-progress'):
-                echo "list in-progress";
+                $found = false;
+                
+                foreach ($tasks ?? [] as $task) {
+                    if ($task['status'] === 'in-progress') {
+                        $found = true;
+                        echo $task['description'] . "\n";
+                    }
+                }
+
+                if ($found === false) {
+                    echo "There is no task with status 'in-progress' \n";
+                    
+                    break;
+                }
 
                 break;
         }
@@ -124,6 +269,10 @@ switch ($argv[1] ?? null) {
 
     default:
         echo "Please enter a valid command \n";
+
+        foreach ($commands as $command) {
+            echo " - $command \n";
+        }
 
         break;
 }
